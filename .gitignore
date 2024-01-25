@@ -1,0 +1,8 @@
+.idea
+.DS_Store
+vendor
+node_modules
+conf/config.toml
+logs/*
+static/dist/*
+static/uploads/*

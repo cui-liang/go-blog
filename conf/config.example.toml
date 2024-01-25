@@ -1,0 +1,9 @@
+# 项目整体配置
+title = ""
+
+[MySQL]
+host = ""
+port = 3306
+username = ""
+password = ""
+name = ""
