@@ -21,6 +21,10 @@ func HTML(input string) template.HTML {
 	re := regexp.MustCompile(`(?is)<p>(<img.*?>)+<\/p>`)
 	// 替换匹配的部分
 	result := re.ReplaceAllStringFunc(string(htmlContent), func(matches string) string {
+		matches = strings.Replace(matches, "<p>", "", -1)
+		matches = strings.Replace(matches, "</p>", "", -1)
+		matches = strings.Replace(matches, ".jpg", "_thumb.jpg", -1)
+		matches = strings.Replace(matches, ".png", "_thumb.png", -1)
 		lines := strings.Split(matches, "\n")
 		var images string
 		count := len(lines)
@@ -36,7 +40,7 @@ func HTML(input string) template.HTML {
 					}
 					return 4
 				}(),
-				re.ReplaceAllString(data, `class="card-img" src="${1}_thumb.${2}"`),
+				strings.Replace(data, "<img", `<img class="card-img"`, -1),
 			)
 		}
 

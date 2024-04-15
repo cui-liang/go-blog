@@ -14,9 +14,9 @@ func NavigationMiddleware(c *gin.Context) {
 		{"name": "留言", "route": "/guestbook", "active": path == "/guestbook"},
 		{"name": "关于", "route": "/about", "active": path == "/about"},
 		{"name": "RSS", "route": "/rss", "active": path == "/rss", "blank": true},
-		{"name": "订阅", "route": "/subscribe", "active": path == "/subscribe"},
+		//{"name": "订阅", "route": "/subscribe", "active": path == "/subscribe"},
 		{"name": "声明", "route": "/licence", "active": path == "/licence"},
-		{"name": "捐赠", "route": "/donate", "active": path == "/donate"},
+		//{"name": "捐赠", "route": "/donate", "active": path == "/donate"},
 	}
 	c.Set("navigation", navigation)
 	c.Next()

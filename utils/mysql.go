@@ -7,13 +7,14 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"log"
+	"time"
 )
 
 var Db *gorm.DB
 
 func init() {
 	cfg, _ := LoadConfig()
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true",
 		cfg.MySQL.Username,
 		cfg.MySQL.Password,
 		cfg.MySQL.Host,
@@ -24,6 +25,9 @@ func init() {
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "tbl_", // 表前缀
 			SingularTable: true,   // 禁用表名复数
+		},
+		NowFunc: func() time.Time {
+			return time.Now().UTC().Truncate(time.Second)
 		},
 		//Logger: logger.Default.LogMode(logger.Info),
 	}

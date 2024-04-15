@@ -1,15 +1,16 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "time"
 
 type User struct {
-	gorm.Model
-	ID      int
-	Name    string
-	Website string
-	Email   string
+	ID        int
+	Username  string
+	Password  string
+	Email     string
+	FullName  string
+	CreatedAt time.Time `gorm:"type:DATETIME;autoCreateTime"`
+	UpdatedAt time.Time `gorm:"type:DATETIME;autoUpdateTime"`
+	IsAdmin   bool
 }
 
 type Auth struct {

@@ -1,12 +1,18 @@
 package models
 
+import (
+	"time"
+)
+
 type Post struct {
-	ID        int
-	Title     string
+	ID        int    `gorm:"primaryKey;autoIncrement"`
+	Title     string `form:"title" binding:"required"`
+	Content   string `form:"content" binding:"required"`
 	Excerpt   string
+	Permalink string
 	Views     int
-	Content   string
-	CreatedAt string
+	CreatedAt time.Time `gorm:"type:DATETIME;autoCreateTime"`
+	UpdatedAt time.Time `gorm:"type:DATETIME;autoUpdateTime"`
 	Category  int
 	Comments  []Comment // 关联的评论
 	Tags      []Tag     `gorm:"foreignKey:PostID"`

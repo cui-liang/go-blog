@@ -1,0 +1,28 @@
+{{define "content"}}
+<h1>注册</h1>
+<form action="/register" method="post">
+    <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" class="form-control" name="username">
+    </div>
+    <div class="form-group">
+        <label for="full_name">姓名</label>
+        <input type="text" id="full_name" class="form-control" name="full_name">
+    </div>
+    <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="text" id="email" class="form-control" name="email">
+    </div>
+    <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" class="form-control" name="password" value="">
+    </div>
+    <div class="form-group">
+        <label for="password_confirm">密码</label>
+        <input type="password" id="password_confirm" class="form-control" name="password_confirm" value="">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" name="login-button">注册</button>
+    </div>
+</form>
+{{end}}

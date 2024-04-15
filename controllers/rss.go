@@ -29,11 +29,7 @@ func GetRss(c *gin.Context) {
 	}
 
 	for _, post := range posts {
-		created, err := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return
-		}
+		created := post.CreatedAt
 		item := &feeds.Item{
 			Id:          fmt.Sprintf("%s/post/%d", domain, post.ID),
 			Title:       post.Title,

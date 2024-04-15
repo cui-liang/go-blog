@@ -4,11 +4,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: './static/js/main.js',
+    entry: './static/src/js/main.js',
     output: {
-        filename: 'main.js',
+        filename: 'js/main.js',
         path: path.resolve(__dirname, 'static/dist'), // 输出目录路径
         publicPath: '/dist/', // 公共路径，用于在 HTML 中正确引用静态资源
+        // 设置字体文件的输出路径
+        assetModuleFilename: 'fonts/[name][ext]',
     },
     module: {
         rules: [
@@ -44,13 +46,13 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[name].css",
-            chunkFilename: "[id].css"
+            filename: "css/[name].css",
+            chunkFilename: "css/[id].css"
         }),
         new CopyWebpackPlugin({
             patterns: [
-                { from: 'node_modules/highlight.js/styles/default.css', to: 'light.css' },
-                { from: 'node_modules/highlight.js/styles/dark.css', to: 'dark.css' },
+                { from: 'node_modules/highlight.js/styles/default.css', to: 'css/light.css' },
+                { from: 'node_modules/highlight.js/styles/dark.css', to: 'css/dark.css' },
             ],
         }),
     ],

@@ -18,9 +18,10 @@ func GetPostDetail(c *gin.Context) {
 	id := c.Param("id")
 	db := utils.Db
 	if err := db.Preload("Comments").First(&post, id).Error; err != nil {
+		fmt.Println("Error:", err)
 		fmt.Println("Record not found!")
 	}
-	fmt.Println(post)
+	fmt.Println("CreatedAt:", post.CreatedAt)
 
 	// 检查用户是否已经访问过
 	if _, err := c.Request.Cookie(fmt.Sprintf("post_%s_visited", id)); errors.Is(err, http.ErrNoCookie) {
@@ -48,6 +49,7 @@ func GetPostList(c *gin.Context) {
 	var count int64
 	var title []string
 	var pagePath string
+	var h2 string
 	pageSize := 10
 	pageStr := c.Param("page")
 	if pageStr == "" {
@@ -68,20 +70,29 @@ func GetPostList(c *gin.Context) {
 	if param == "technology" {
 		pagePath = "/technology"
 		title = append(title, "技术")
+		h2 = "分类：技术"
 		db = db.Where("category = ?", 1)
 	} else if param == "life" {
 		pagePath = "/life"
 		title = append(title, "生活")
+		h2 = "分类：生活"
 		db = db.Where("category = ?", 2)
-	} else if param == "run" {
-		pagePath = "/run"
+	} else if param == "running" {
+		pagePath = "/running"
 		title = append(title, "跑步")
+		h2 = "分类：跑步"
+		db = db.Where("category = ?", 3)
+	} else if param == "digital" {
+		pagePath = "/digital"
+		h2 = "分类：数码"
+		title = append(title, "数码")
 		db = db.Where("category = ?", 3)
 	}
 	tag := c.Param("tag")
 	if tag != "" {
 		pagePath = "/tag/" + tag
 		title = append(title, tag)
+		h2 = "标签：" + tag
 		db = db.Joins("JOIN tbl_tag ON tbl_tag.post_id = tbl_post.id").Where("name = ?", tag)
 	}
 
@@ -128,21 +139,22 @@ func GetPostList(c *gin.Context) {
 	}
 	var start int
 
-	if page < 5 {
+	if page < 4 {
 		start = 1
 	} else if page > pageCount-3 {
-		start = pageCount - 6
+		start = pageCount - 4
 	} else {
-		start = page - 3
+		start = page - 2
 	}
 
-	pages := make([]int, 7)
+	pages := make([]int, 5)
 	for i := range pages {
 		pages[i] = start + i
 	}
 
 	params := utils.MergeParams(c, gin.H{
 		"title":     utils.MergeTitle(title),
+		"H2":        h2,
 		"Posts":     posts,
 		"Page":      page,
 		"PageCount": pageCount,
@@ -152,4 +164,62 @@ func GetPostList(c *gin.Context) {
 		"PagePath":  pagePath + "/page/",
 	})
 	c.HTML(http.StatusOK, "index.html", params)
+}
+
+func CreatePost(c *gin.Context) {
+	var post models.Post
+	params := utils.MergeParams(c, gin.H{
+		"H2":    "创建博客",
+		"title": "创建博客",
+		"Post":  post,
+	})
+	c.HTML(http.StatusOK, "form.html", params)
+}
+
+func UpdatePost(c *gin.Context) {
+	var post models.Post
+	id := c.Param("id")
+	db := utils.Db
+	if err := db.First(&post, id).Error; err != nil {
+		fmt.Println("Record not found!")
+	}
+	params := utils.MergeParams(c, gin.H{
+		"H2":    post.Title,
+		"title": post.Title,
+		"Post":  post,
+	})
+	c.HTML(http.StatusOK, "form.html", params)
+}
+
+func SavePost(c *gin.Context) {
+	var form models.Post
+
+	if err := c.ShouldBind(&form); err != nil {
+		c.String(http.StatusBadRequest, "Validation failed: "+err.Error())
+		return
+	}
+	db := utils.Db
+	if form.ID > 0 {
+		var post models.Post
+
+		// 查询数据库获取要更新的文章
+		if err := utils.Db.First(&post, form.ID).Error; err != nil {
+			c.String(http.StatusNotFound, "Post not found")
+			return
+		}
+
+		// 更新文章字段，只更新表单中已有的字段
+		if err := utils.Db.Model(&post).Updates(form).Error; err != nil {
+			c.String(http.StatusInternalServerError, "Failed to update post")
+			return
+		}
+	} else {
+		// 创建新博客
+		if err := db.Create(&form).Error; err != nil {
+			c.String(http.StatusInternalServerError, "Failed to create post")
+			return
+		}
+	}
+
+	c.Redirect(http.StatusFound, fmt.Sprintf("/post/%d", form.ID))
 }

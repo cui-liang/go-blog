@@ -1,0 +1,64 @@
+{{define "content"}}
+<h1>留言</h1>
+<ul class="comment-list">
+    {{range .Comments}}
+    <li class="d-flex">
+        <div class="flex-shrink-0">
+            <img class="rounded" src="/images/noavatar.jpg" alt="">
+        </div>
+        <div class="flex-grow-1 ms-3">
+            <div class="meta">
+                <span class="text-primary">{{.Author}}</span> 评论于 {{.CreatedAt}}
+                <span class="float-end">修改 删除</span>
+            </div>
+            {{.Content | MarkdownToHTML}}
+            {{if len .SubComments}}
+            <div class="hint">共 <em>{{len .SubComments}}</em> 条回复</div>
+            {{range .SubComments}}
+            <div class="d-flex">
+                <div class="flex-shrink-0">
+                    <img class="rounded" src="/images/noavatar.jpg" alt="">
+                </div>
+                <div class="flex-grow-1 ms-2">
+                    <div class="meta">
+                        <a href="https://www.cuiliang.com" target="_blank">{{.Author}}</a> 评论于 {{.CreatedAt}}
+                        <span class="float-end">
+                            <a class="reply" href="javascript:void(0);"><i class="fas fa-reply"></i> 回复</a>
+                        </span>
+                    </div>
+                    {{.Content | MarkdownToHTML}}
+                </div>
+            </div>
+            {{end}}
+            {{end}}
+            <div class="mb-2">
+                <a class="reply" href="javascript:void(0);"><i class="fas fa-reply"></i> 回复</a>
+            </div>
+        </div>
+    </li>
+    {{end}}
+</ul>
+
+<p>
+    您的留言可能会被显示在上面的列表中，若要发私信给我，请 Email 至 cuiliang@cuiliang.com。
+</p>
+
+<div id="comment">
+    <div class="page-header">
+        <h2>我要留言</h2>
+    </div>
+    {{if .FullName}}
+    <form action="/guestbook" method="post">
+        <div class="mb-3 required">
+            <label class="form-label" for="comment-content">内容</label>
+            <textarea id="comment-content" class="form-control" name="Comment[content]" aria-required="true"></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+    </form>
+    {{else}}
+    请登录后发布留言 <a href="/login">点击登录</a>
+    {{end}}
+</div>
+{{end}}

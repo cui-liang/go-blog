@@ -20,24 +20,22 @@ import (
 func main() {
 	r := gin.Default()
 
+	// 设置一个用于存储登录状态的 session
+	store := cookie.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("mySession", store))
+
 	r.Use(middleware.LoggerMiddleware).
 		Use(middleware.NavigationMiddleware).
 		Use(middleware.ArchiveMiddleware).
-		Use(middleware.CalendarMiddleware)
+		Use(middleware.CalendarMiddleware).
+		Use(middleware.AuthMiddleware)
 
 	// 设置静态文件路由映射
-	r.Static("/css", "./static/css")
-	r.Static("/js", "./static/js")
-	r.Static("/node", "./node_modules")
 	r.Static("/dist", "./static/dist")
 	r.Static("/images", "./static/images")
 	r.Static("/uploads", "./static/uploads")
 	r.StaticFile("/favicon.ico", "./static/favicon.ico")
 	r.HTMLRender = loadTemplates("./views")
-
-	// 设置一个用于存储登录状态的 session
-	store := cookie.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions("mySession", store))
 
 	front := r.Group("/", middleware.CommonMiddleware)
 	{
@@ -46,15 +44,24 @@ func main() {
 		front.GET("/page/:page", controllers.GetPostList)
 		front.GET("/:param", controllers.GetPostList)
 		front.GET("/:param/page/:page", controllers.GetPostList)
+		front.GET("/post/create", controllers.CreatePost)
+		front.GET("/post/update/:id", controllers.UpdatePost)
+		front.POST("/post/save", controllers.SavePost)
 		front.GET("/post/:id", controllers.GetPostDetail)
 		front.GET("/tag/:tag", controllers.GetPostList)
 		front.GET("/tag/:tag/page/:page", controllers.GetPostList)
 		front.GET("/tags", controllers.GetTagList)
 		front.GET("/guestbook", controllers.GetCommentList)
+		front.POST("/comment/create", controllers.CreateComment)
+		front.GET("/comment/edit/:id", controllers.EditComment)
+		front.POST("/comment/update", controllers.UpdateComment)
+		front.GET("/comment/delete/:id", controllers.DeleteComment)
 		front.GET("/rss", controllers.GetRss)
-		front.GET("/subscribe", controllers.GetCommentList)
 		front.GET("/login", controllers.Login)
-		front.POST("/login", controllers.LoginCheck)
+		front.POST("/login", controllers.Login)
+		front.GET("/register", controllers.Register)
+		front.POST("/register", controllers.Register)
+		front.GET("/logout", controllers.Logout)
 		front.GET("/about", func(c *gin.Context) {
 			params := utils.MergeParams(c, gin.H{
 				"title": utils.MergeTitle([]string{"关于"}),
@@ -89,7 +96,7 @@ func loadTemplates(templatesDir string) multitemplate.Renderer {
 		panic(err.Error())
 	}
 
-	includes, err := filepath.Glob(templatesDir + "/includes/*.html")
+	includes, err := filepath.Glob(templatesDir + "/*.html")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -101,19 +108,11 @@ func loadTemplates(templatesDir string) multitemplate.Renderer {
 		files := append(layoutCopy, include)
 		r.AddFromFilesFuncs(filepath.Base(include), template.FuncMap{
 			"MarkdownToHTML": utils.MarkdownToHTML,
-			"ShortDate": func(date string) string {
-				t, err := time.Parse("2006-01-02 15:04:05", date)
-				if err != nil {
-					return ""
-				}
-				return t.Format("06-01-02")
+			"ShortDate": func(date time.Time) string {
+				return date.Format("06-01-02")
 			},
-			"ShortDateTime": func(date string) string {
-				t, err := time.Parse("2006-01-02 15:04:05", date)
-				if err != nil {
-					return ""
-				}
-				return t.Format("06-01-02 15:04")
+			"ShortDateTime": func(date time.Time) string {
+				return date.Format("06-01-02 15:04")
 			},
 			"CategoryPath": func(category int) string {
 				return models.GetCategoryPath(category)

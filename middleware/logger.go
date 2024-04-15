@@ -37,12 +37,12 @@ func LoggerMiddleware(c *gin.Context) {
 	}
 
 	// Use Zap logger to log the message
-	logger.AccessLogger.Info("Request handled", logFields...)
+	logger.Logger.Info("Request", logFields...)
 
 	// 记录错误日志
 	if len(c.Errors) > 0 {
 		for _, err := range c.Errors.Errors() {
-			logger.ErrorLogger.Error("Error Log", zap.Error(errors.New(err)))
+			logger.Logger.Error("Error", zap.Error(errors.New(err)))
 		}
 	}
 }

@@ -25,6 +25,7 @@ func CalendarMiddleware(c *gin.Context) {
 	type Day struct {
 		Date     string
 		HasEvent bool
+		Disabled bool
 	}
 	var calendar [][]Day
 	var week []Day
@@ -33,8 +34,14 @@ func CalendarMiddleware(c *gin.Context) {
 	// 计算月份开始的前置空格数量
 	leadingSpaces := int(firstDay.Weekday())
 	// 如果月份不是从周日开始，添加前置空格
+	lastMonthEnd := lastMonth.AddDate(0, 0, -1*leadingSpaces)
 	for i := 0; i < leadingSpaces; i++ {
-		week = append(week, Day{})
+		day := Day{
+			Date:     lastMonthEnd.Format("02"),
+			Disabled: true,
+		}
+		week = append(week, day)
+		lastMonthEnd = lastMonthEnd.AddDate(0, 0, 1)
 	}
 
 	for currentDay.Before(lastDay) || currentDay.Equal(lastDay) {
@@ -54,8 +61,19 @@ func CalendarMiddleware(c *gin.Context) {
 
 	// 处理最后一周，如果不满一周
 	if len(week) > 0 {
+		// 如果下个月的开始是本月的第一天，删除第一个日期，保持接着上一周的日期
+		if nextMonth.Day() == 1 {
+			week = week[1:]
+		}
+
+		// 补足最后一周，接着上一周的日期
 		for len(week) < 7 {
-			week = append(week, Day{})
+			day := Day{
+				Date:     nextMonth.Format("02"),
+				Disabled: true,
+			}
+			week = append(week, day)
+			nextMonth = nextMonth.AddDate(0, 0, 1)
 		}
 		calendar = append(calendar, append([]Day{}, week...))
 	}

@@ -2,45 +2,16 @@ import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'blueimp-gallery/js/jquery.blueimp-gallery.min';
+import 'blueimp-gallery/css/blueimp-gallery.min.css';
 
 // 引入 highlight.js
 import hljs from 'highlight.js';
 
 // 引入本地文件
-import '../css/site.scss';
+import '../css/main.scss';
 
 $(document).ready(function () {
-    const themeSwitch = $('#theme-switch');
-    const html = $('html');
-    const body = $('body');
-    const main = $('main');
-
-    // 监听主题切换
-    themeSwitch.on('change', function () {
-        if (themeSwitch.prop('checked')) {
-            setTheme('dark');
-        } else {
-            setTheme('light');
-        }
-    });
-
-    function setTheme(theme) {
-        const isDarkTheme = theme === 'dark';
-
-        html.attr('data-bs-theme', theme);
-        const expires = new Date();
-        expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
-        document.cookie = `theme=${theme};expires=${expires.toUTCString()};path=/`;
-
-        const bodyClasses = isDarkTheme ? ['bg-light', 'bg-dark'] : ['bg-dark', 'bg-light'];
-        const mainClasses = isDarkTheme ? ['bg-white', 'bg-black'] : ['bg-black', 'bg-white'];
-
-        body.removeClass(...bodyClasses).addClass(...bodyClasses.reverse());
-        main.removeClass(...mainClasses).addClass(...mainClasses.reverse());
-
-        $('#hljs-theme').attr('href', `/dist/${theme}.css`);
-    }
-
     // 查找所有代码块并应用语法高亮
     $('pre code').each(function(i, block) {
         hljs.highlightElement(block);
@@ -73,7 +44,6 @@ $(document).ready(function () {
     });
 
     //gallery
-    body.append('<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls"><div class="slides"></div><h3 class="title"></h3><a class="prev">‹</a><a class="next">›</a><a class="close">×</a><a class="play-pause"></a><ol class="indicator"></ol></div>');
     $('p img,.card-img').each(function(){
         var img_src = $(this).attr('src');
         var img_alt = $(this).attr('alt');
