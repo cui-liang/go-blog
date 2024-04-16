@@ -16,3 +16,7 @@ go run main.go
 或者
 go build -o go-blog
 ./go-blog
+
+## 使用 Docker
+docker build -t go-blog .
+docker run -p 8080:8080 go-blog 
