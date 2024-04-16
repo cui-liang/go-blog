@@ -7,7 +7,8 @@ type Comment struct {
 	ParentID    int // 父评论的 ID
 	PostID      int
 	Author      string
-	Content     string `form:"content" binding:"required"`
-	CreatedAt   time.Time
+	Content     string    `form:"content" binding:"required"`
+	CreatedAt   time.Time `gorm:"type:DATETIME;autoCreateTime"`
 	SubComments []Comment `gorm:"foreignKey:ParentID"`
+	Post        Post
 }

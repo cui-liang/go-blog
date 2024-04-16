@@ -8,12 +8,12 @@ type Post struct {
 	ID        int    `gorm:"primaryKey;autoIncrement"`
 	Title     string `form:"title" binding:"required"`
 	Content   string `form:"content" binding:"required"`
-	Excerpt   string
-	Permalink string
+	Excerpt   string `form:"excerpt" binding:"required"`
+	Category  int    `form:"category" binding:"required"`
+	Permalink string `form:"permalink"`
 	Views     int
 	CreatedAt time.Time `gorm:"type:DATETIME;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"type:DATETIME;autoUpdateTime"`
-	Category  int
 	Comments  []Comment // 关联的评论
 	Tags      []Tag     `gorm:"foreignKey:PostID"`
 }

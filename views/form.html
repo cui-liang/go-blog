@@ -5,8 +5,8 @@
     <form action="/post/save" method="post">
         <input type="hidden" name="ID" value="{{ .Post.ID }}">
         <div class="mb-3">
-            <label for="post-category" class="form-label">分类</label>
-            <select id="post-category" class="form-control" name="Post[category]">
+            <label for="category" class="form-label">分类</label>
+            <select id="category" class="form-control" name="category">
                 <option value="0">未分类</option>
                 <option value="1">技术文章</option>
                 <option value="2">生活随笔</option>
@@ -25,37 +25,37 @@
             <textarea id="content" class="form-control" name="content">{{.Post.Content}}</textarea>
         </div>
         <div class="mb-3">
-            <label for="post-permalink" class="form-label">固定链接</label>
-            <input type="text" id="post-permalink" class="form-control" name="permalink" value="{{.Post.Permalink}}">
+            <label for="permalink" class="form-label">固定链接</label>
+            <input type="text" id="permalink" class="form-control" name="permalink" value="{{.Post.Permalink}}">
         </div>
         <div class="mb-3">
-            <label for="post-tags" class="form-label">标签</label>
-            <input type="text" id="post-tags" class="form-control" name="Post[tags]" value="{{.Post.Tags}}">
+            <label for="tags" class="form-label">标签</label>
+            <input type="text" id="tags" class="form-control" name="tags" value="{{.Post.Tags}}">
         </div>
         <div class="mb-3">
             <label class="form-label d-block">状态</label>
             <div class="form-check form-check-inline">
-                <input type="radio" id="i0" class="form-check-input" name="Post[status]" value="1">
-                <label class="form-check-label" for="i0">已发布</label>
+                <input type="radio" id="status_1" class="form-check-input" name="status" value="1">
+                <label class="form-check-label" for="status_1">已发布</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="radio" id="i1" class="form-check-input" name="Post[status]" value="0" checked>
-                <label class="form-check-label" for="i1">草稿</label>
+                <input type="radio" id="status_0" class="form-check-input" name="status" value="0">
+                <label class="form-check-label" for="status_0">草稿</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="radio" id="i2" class="form-check-input" name="Post[status]" value="-1">
-                <label class="form-check-label" for="i2">已删除</label>
+                <input type="radio" id="status_-1" class="form-check-input" name="status" value="-1">
+                <label class="form-check-label" for="status_-1">已删除</label>
             </div>
         </div>
         <div class="mb-3">
             <label class="form-label d-block">是否锁定</label>
             <div class="form-check form-check-inline">
-                <input type="radio" id="i3" class="form-check-input" name="Post[locked]" value="0" checked>
-                <label class="form-check-label" for="i3">未锁定</label>
+                <input type="radio" id="locked_0" class="form-check-input" name="locked" value="0">
+                <label class="form-check-label" for="locked_0">未锁定</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="radio" id="i4" class="form-check-input" name="Post[locked]" value="1">
-                <label class="form-check-label" for="i4">已锁定</label>
+                <input type="radio" id="locked_1" class="form-check-input" name="locked" value="1">
+                <label class="form-check-label" for="locked_1">已锁定</label>
             </div>
         </div>
         <div class="mb-3">
