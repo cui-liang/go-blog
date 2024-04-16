@@ -8,7 +8,9 @@ WORKDIR /app
 COPY . .
 
 # 下载Go依赖
-RUN go mod download
+RUN export GO111MODULE=on && \
+    export GOPROXY=https://goproxy.cn && \
+    go mod download
 
 # 构建Go应用
 RUN CGO_ENABLED=0 GOOS=linux go build -o go-blog ./main.go
